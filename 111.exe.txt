@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>穗花之境 | 農藥殘留安全查詢系統</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;700&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <style>
+        :root {
+            --ghibli-night-bg: #1a2a6c;
+            --ghibli-grass: #2d5a27;
+            --ghibli-warm-white: #fefae0;
+            --ghibli-accent: #e9edc6;
+        }
+
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #0c1428;
+            color: var(--ghibli-warm-white);
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        .ghibli-title {
+            font-family: 'ZCOOL XiaoWei', serif;
+        }
+
+        .night-sky {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, #050b18 0%, #162a4d 100%);
+            z-index: -2;
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.5;
+            animation: twinkle var(--duration) infinite ease-in-out;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        .cloud {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.05);
+            filter: blur(40px);
+            border-radius: 50%;
+            z-index: -1;
+            animation: drift var(--duration) linear infinite;
+        }
+
+        @keyframes drift {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(100vw); }
+        }
+
+        /* 吉卜力風格卡片 */
+        .ghibli-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .ghibli-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(233, 237, 198, 0.4);
+        }
+
+        .btn-ghibli {
+            background: linear-gradient(135deg, #5b8c5a 0%, #2d5a27 100%);
+            border: 2px solid #e9edc6;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .btn-ghibli:hover {
+            transform: scale(1.05) rotate(-1deg);
+            box-shadow: 0 0 20px rgba(233, 237, 198, 0.3);
+        }
+
+        /* 草地剪影 */
+        .grass-silhouette {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 150px;
+            background: url('https://www.transparenttextures.com/patterns/carbon-fibre.png'), linear-gradient(to top, #061005, transparent);
+            z-index: -1;
+            mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="black" d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,224C672,245,768,267,864,250.7C960,235,1056,181,1152,165.3C1248,149,1344,171,1392,181.3L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+            mask-size: cover;
+        }
+
+        /* 隱藏捲軸 */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
+        ::-webkit-scrollbar-thumb { background: #5b8c5a; border-radius: 10px; }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="night-sky" id="star-container"></div>
+    <div class="grass-silhouette"></div>
+
+    <div class="max-w-5xl mx-auto space-y-20 relative">
+        
+        <header class="text-center py-20 space-y-6">
+            <div class="inline-block px-6 py-2 rounded-full border border-green-200/30 bg-green-900/20 text-green-200 text-sm mb-4">
+                112學年度 期末專題作品
+            </div>
+            <h1 class="ghibli-title text-6xl md:text-8xl text-white drop-shadow-2xl">穗花之境</h1>
+            <p class="text-xl md:text-2xl text-green-100/80 font-light tracking-widest">農藥殘留數據透明化查詢系統</p>
+            <div class="flex justify-center gap-4 pt-8">
+                <a href="#intro" class="px-8 py-3 rounded-full border border-white/20 hover:bg-white/10 transition">專題介紹</a>
+                <a href="#system" class="px-8 py-3 rounded-full bg-white text-blue-900 font-bold hover:shadow-lg transition">立即試用</a>
+            </div>
+        </header>
+
+        <section id="intro" class="grid md:grid-cols-2 gap-8 items-center">
+            <div class="ghibli-card p-8 md:p-12 space-y-6">
+                <h2 class="text-3xl font-bold text-green-200 flex items-center gap-3">
+                    <i class="fas fa-leaf"></i> 專題動機
+                </h2>
+                <p class="leading-relaxed text-gray-200">
+                    在我們日常生活中，「吃得安心」已成為一種奢侈。許多同學在學校午餐時常討論食材的來源與安全。為了守護大家的餐桌健康，我們團隊開發了「穗花之境」系統。
+                </p>
+                <p class="leading-relaxed text-gray-200">
+                    我們整合了政府開放資料 API，將晦澀難懂的化學數據轉化為易於理解的圖像與評分，讓使用者只需輕輕一掃，即可知曉蔬果背後的守護故事。
+                </p>
+                <div class="flex gap-4 pt-4 text-sm">
+                    <span class="px-3 py-1 bg-green-500/20 rounded-lg border border-green-500/30">#食安教育</span>
+                    <span class="px-3 py-1 bg-blue-500/20 rounded-lg border border-blue-500/30">#數據分析</span>
+                    <span class="px-3 py-1 bg-yellow-500/20 rounded-lg border border-yellow-500/30">#社會責任</span>
+                </div>
+            </div>
+            <div class="relative group">
+                <!-- 模擬插畫框 -->
+                <div class="rounded-3xl overflow-hidden shadow-2xl border-4 border-white/10 rotate-2 group-hover:rotate-0 transition-transform duration-500">
+                    <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Mountain Night" class="w-full h-80 object-cover opacity-80">
+                    <div class="absolute inset-0 bg-gradient-to-t from-blue-900/80 to-transparent"></div>
+                    <div class="absolute bottom-6 left-6">
+                        <p class="text-white font-bold italic">「每一粒米，都是大地的恩賜。」</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="system" class="space-y-8">
+            <div class="text-center">
+                <h2 class="ghibli-title text-4xl mb-2">系統操作演示</h2>
+                <p class="text-green-200/60">輸入蔬果名稱，探索檢驗結果</p>
+            </div>
+
+            <div class="ghibli-card max-w-3xl mx-auto p-2">
+                <div class="flex p-4 gap-4">
+                    <input type="text" id="searchInput" placeholder="例如：青江菜、蘋果、番茄..." class="flex-1 bg-white/5 border border-white/10 rounded-2xl px-6 py-4 outline-none focus:border-green-400 transition">
+                    <button onclick="simulateSearch()" class="btn-ghibli px-8 py-4 rounded-2xl font-bold flex items-center gap-2">
+                        <i class="fas fa-search"></i> 查詢
+                    </button>
+                </div>
+                
+                <div id="resultArea" class="hidden p-6 border-t border-white/10 animate-fade-in">
+                    <div class="flex items-center justify-between bg-white/5 p-6 rounded-2xl">
+                        <div class="flex items-center gap-6">
+                            <div id="statusIcon" class="w-16 h-16 rounded-full flex items-center justify-center text-3xl"></div>
+                            <div>
+                                <h3 id="resultTitle" class="text-2xl font-bold"></h3>
+                                <p id="resultSubtitle" class="text-sm text-gray-400"></p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span id="scoreBadge" class="text-4xl font-bold"></span>
+                            <p class="text-xs text-gray-400 uppercase tracking-widest mt-1">Safety Score</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-20">
+            <div class="ghibli-card p-12 text-center relative overflow-hidden">
+                <!-- 裝飾用背景元素 -->
+                <div class="absolute -top-10 -right-10 w-40 h-40 bg-green-500/10 rounded-full blur-3xl"></div>
+                <div class="absolute -bottom-10 -left-10 w-40 h-40 bg-blue-500/10 rounded-full blur-3xl"></div>
+
+                <div class="relative z-10 space-y-8">
+                    <h2 class="text-4xl font-bold">準備好體驗完整功能了嗎？</h2>
+                    <p class="text-gray-300 max-w-xl mx-auto text-lg leading-relaxed">
+                        我們將本系統封裝成跨平台的桌面應用程式，內含完整的數據緩存機制與更精美的視覺報表，歡迎評審與老師下載指教。
+                    </p>
+                    <div class="flex flex-col md:flex-row justify-center items-center gap-6">
+                        <button onclick="mockDownload()" class="btn-ghibli px-10 py-5 rounded-full text-xl font-bold flex items-center gap-3">
+                            <i class="fas fa-file-download"></i> 下載專案執行檔 (.exe / .dmg)
+                        </button>
+                        <p class="text-sm text-gray-400 italic">
+                            <i class="fas fa-info-circle mr-1"></i> 檔案大小約 42.5 MB | 版本 v1.0.2
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="py-12 border-t border-white/5 text-center text-gray-500 text-sm">
+            <p>© 2024 穗花之境 專題小組 (高中部 214 班)</p>
+            <p class="mt-2 flex justify-center gap-4">
+                <span>指導老師：陳大文 老師</span>
+                <span>設計：林小美</span>
+                <span>開發：王阿華</span>
+            </p>
+        </footer>
+    </div>
+
+    <!-- 訊息提示彈窗 -->
+    <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 ghibli-card px-8 py-4 opacity-0 transition-opacity pointer-events-none z-50 text-green-200">
+        <span id="toastMsg"></span>
+    </div>
+
+    <script>
+        function initBackground() {
+            const container = document.getElementById('star-container');
+            
+            // 產生 150 顆星星
+            for (let i = 0; i < 150; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                const size = Math.random() * 2 + 1;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                star.style.setProperty('--duration', `${Math.random() * 3 + 2}s`);
+                container.appendChild(star);
+            }
+
+            // 產生 5 朵緩緩移動的雲
+            for (let i = 0; i < 5; i++) {
+                const cloud = document.createElement('div');
+                cloud.className = 'cloud';
+                const width = Math.random() * 400 + 200;
+                cloud.style.width = `${width}px`;
+                cloud.style.height = `${width/2}px`;
+                cloud.style.left = `-500px`;
+                cloud.style.top = `${Math.random() * 60}%`;
+                cloud.style.setProperty('--duration', `${Math.random() * 60 + 60}s`);
+                cloud.style.animationDelay = `${Math.random() * 100}s`;
+                container.appendChild(cloud);
+            }
+        }
+
+        const mockData = {
+            '青江菜': { status: 'safe', score: 98, detail: '未檢出農藥殘留' },
+            '蘋果': { status: 'warning', score: 82, detail: '符合國家標準 (檢出微量大克蟎)' },
+            '草莓': { status: 'danger', score: 45, detail: '檢出超標敵百蟲，建議徹底清洗' },
+            '番茄': { status: 'safe', score: 95, detail: '產銷履歷驗證通過' },
+            'default': { status: 'safe', score: 90, detail: '查無異常紀錄，建議依常規清洗' }
+        };
+
+        function simulateSearch() {
+            const input = document.getElementById('searchInput').value.trim();
+            if (!input) return;
+
+            const resultArea = document.getElementById('resultArea');
+            const title = document.getElementById('resultTitle');
+            const subtitle = document.getElementById('resultSubtitle');
+            const score = document.getElementById('scoreBadge');
+            const icon = document.getElementById('statusIcon');
+
+            const data = mockData[input] || mockData['default'];
+
+            resultArea.classList.remove('hidden');
+            title.innerText = input;
+            subtitle.innerText = data.detail;
+            score.innerText = data.score;
+
+            if (data.status === 'safe') {
+                icon.innerHTML = '<i class="fas fa-check-circle"></i>';
+                icon.className = 'w-16 h-16 rounded-full flex items-center justify-center text-3xl bg-green-500/20 text-green-400';
+                score.className = 'text-4xl font-bold text-green-400';
+            } else if (data.status === 'warning') {
+                icon.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
+                icon.className = 'w-16 h-16 rounded-full flex items-center justify-center text-3xl bg-yellow-500/20 text-yellow-400';
+                score.className = 'text-4xl font-bold text-yellow-400';
+            } else {
+                icon.innerHTML = '<i class="fas fa-biohazard"></i>';
+                icon.className = 'w-16 h-16 rounded-full flex items-center justify-center text-3xl bg-red-500/20 text-red-400';
+                score.className = 'text-4xl font-bold text-red-400';
+            }
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMsg').innerText = msg;
+            toast.style.opacity = '1';
+            setTimeout(() => {
+                toast.style.opacity = '0';
+            }, 3000);
+        }
+
+        function mockDownload() {
+            showToast('🌱 正在準備安裝程式，請稍候...');
+            setTimeout(() => {
+                showToast('🚀 已成功模擬下載：穗花之境_Setup.exe');
+            }, 2000);
+        }
+
+        window.onload = initBackground;
+    </script>
+</body>
+</html>
